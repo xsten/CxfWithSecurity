@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xmlns:jaxws="http://cxf.apache.org/jaxws"
+xsi:schemaLocation="
+http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans.xsd
+http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
+
+
+<!-- If this import is not defined, the following exception is thrown by the CXFServlet :
+org.springframework.beans.factory.NoSuchBeanDefinitionException: No bean named 'cxf' is defined -->
+<import resource="classpath:META-INF/cxf/cxf.xml" />
+<!-- If this import is not defined, the following exception is thrown by the CXF bus :
+org.apache.cxf.BusException: No binding factory for namespace http://schemas.xmlsoap.org/wsdl/soap/ registered. -->
+<import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" />
+<!-- If this import is not defined, the following exception is thrown by the CXF Soap extension bean
+java.lang.RuntimeException: Could not find destination factory for transport http://schemas.xmlsoap.org/soap/http
+ -->
+<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
+
+<!-- password check start -->
+<!-- 
+<import resource="classpath:META-INF/cxf/cxf.xml" />
+<import resource="classpath*:META-INF/cxf/cxf-extension-*.xml" />
+ -->
+ <!-- password check end -->
+ 
+ 
+<jaxws:endpoint
+id="orderProcess"
+implementor="net.stenuit.xavier.mycxf.OrderProcessImpl"
+address="/OrderProcess">
+
+<!-- interceptor for password check --> 
+
+<!-- Password-based security 
+   <jaxws:inInterceptors>
+      <bean class="org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor">
+         <constructor-arg>
+            <map>
+               <entry key="action" value="UsernameToken"/>
+               <entry key="passwordType" value="PasswordText"/>
+               <entry key="passwordCallbackRef"> 
+                  <ref bean="myPasswordCallback"/>
+               </entry>
+            </map>
+         </constructor-arg>
+      </bean>
+   </jaxws:inInterceptors>
+ -->
+
+<!-- X509-based security -->
+
+	<jaxws:inInterceptors>
+    <bean class="org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor">
+        <constructor-arg>
+            <map>
+                <entry key="action" value="Signature"/>
+                <entry key="signaturePropFile" value="server_sign.properties"/>
+                <!--  <entry key="passwordCallbackClass" value="..."/>  -->
+           </map>
+        </constructor-arg>
+    </bean>
+    <bean class="org.apache.cxf.ws.security.wss4j.DefaultCryptoCoverageChecker"/>
+</jaxws:inInterceptors>
+
+</jaxws:endpoint>   
+
+<bean id="myPasswordCallback"
+      class="net.stenuit.xavier.mycxf.ServerPasswordCallback"/>
+</beans>
