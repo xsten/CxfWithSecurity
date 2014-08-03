@@ -15,9 +15,7 @@ public class ServerPasswordCallback implements CallbackHandler {
 	
 		WSPasswordCallback pc = (WSPasswordCallback) callbacks[0];
 		
-		if (!pc.getPassword().equals("password")) {
-            throw new IOException("wrong password");
-       }
+		pc.setPassword("");
 
 	}
 

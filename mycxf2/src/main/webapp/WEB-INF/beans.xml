@@ -53,17 +53,30 @@ address="/OrderProcess">
 <!-- X509-based security -->
 
 	<jaxws:inInterceptors>
-    <bean class="org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor">
-        <constructor-arg>
-            <map>
-                <entry key="action" value="Signature"/>
-                <entry key="signaturePropFile" value="server_sign.properties"/>
-                <!--  <entry key="passwordCallbackClass" value="..."/>  -->
-           </map>
-        </constructor-arg>
-    </bean>
-    <bean class="org.apache.cxf.ws.security.wss4j.DefaultCryptoCoverageChecker"/>
-</jaxws:inInterceptors>
+    	<bean class="org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor">
+        	<constructor-arg>
+	           	 <map>
+	            	    <entry key="action" value="Signature"/>
+	                	<entry key="signaturePropFile" value="server_sign.properties"/>
+	                	<!--  <entry key="passwordCallbackClass" value="..."/>  -->
+	           	</map>
+        	</constructor-arg>
+    	</bean>
+    	<bean class="org.apache.cxf.ws.security.wss4j.DefaultCryptoCoverageChecker"/>
+    </jaxws:inInterceptors>
+    <jaxws:outInterceptors>	
+    	<bean class="org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor">
+    		<constructor-arg>
+    			<map>
+    				<entry key="action" value="Signature"/>
+    				<entry key="signaturePropFile" value="server_dosign.properties" />
+    				<entry key="user" value="encryption"/> 
+    				<entry key="passwordCallbackClass" value="net.stenuit.xavier.mycxf.ServerPasswordCallback"/> <!-- passphrase for the key -->
+    				<entry key="signatureKeyIdentifier" value="DirectReference" />
+    			</map>
+    		</constructor-arg>
+    	</bean>
+	</jaxws:outInterceptors>
 
 </jaxws:endpoint>   
 
