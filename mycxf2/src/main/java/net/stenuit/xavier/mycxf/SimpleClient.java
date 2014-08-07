@@ -1,10 +1,8 @@
 package net.stenuit.xavier.mycxf;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
@@ -57,11 +55,16 @@ public class SimpleClient implements CallbackHandler {
 		//URL test=SimpleClient.class.getClassLoader().getResource("client_sign.properties");
 		//System.out.println(test);
 		
-		outProps.put(WSHandlerConstants.ACTION, "Signature");
-		outProps.put(WSHandlerConstants.USER, "signature"); // "signature" is the alias name of the key in the keystore
+		outProps.put(WSHandlerConstants.ACTION, WSHandlerConstants.SIGNATURE+" "+WSHandlerConstants.ENCRYPT);
+		outProps.put(WSHandlerConstants.SIGNATURE_USER, "signature"); // "signature" is the alias name of the key in the keystore
 		outProps.put(WSHandlerConstants.SIG_KEY_ID, "DirectReference"); // copy the whole certificate in the soap header
 		outProps.put(WSHandlerConstants.PW_CALLBACK_CLASS, SimpleClient.class.getName());
 		outProps.put(WSHandlerConstants.SIG_PROP_FILE, "client_sign.properties");
+		
+		outProps.put(WSHandlerConstants.ENCRYPTION_USER, "encryption (mycakey)");
+		outProps.put(WSHandlerConstants.ENC_PROP_FILE, "client_encrypt.properties");
+		outProps.put(WSHandlerConstants.ENC_KEY_ID,"DirectReference"); // Copy the whole certificate in soap header
+		
 		WSS4JOutInterceptor wssOut=new WSS4JOutInterceptor(outProps);
 		cxfEndpoint.getOutInterceptors().add(wssOut);
 		
